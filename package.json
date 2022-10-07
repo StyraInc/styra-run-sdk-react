@@ -1,0 +1,48 @@
+{
+  "name": "styra-run-sdk-react",
+  "version": "0.0.1",
+  "description": "Styra Run React Front-End SDK",
+  "type": "module",
+  "module": "./lib/main.js",
+  "main": "./dist/react-styra-run.umd.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/react-styra-run.js",
+      "require": "./dist/react-styra-run.umd.cjs"
+    }
+  },
+  "files": [
+    "dist", "lib"
+  ],
+  "scripts": {
+    "build": "vite build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/StyraInc/styra-run-sdk-react.git"
+  },
+  "keywords": [
+    "Styra",
+    "Run",
+    "OPA",
+    "js",
+    "react",
+    "SDK"
+  ],
+  "author": "Styra Inc.",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/StyraInc/styra-run-sdk-react/issues"
+  },
+  "homepage": "https://github.com/StyraInc/styra-run-sdk-react#readme",
+  "peerDependencies": {
+    "prop-types": "^15.8.1",
+    "react": "^18.2.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.0.17",
+    "@types/react-dom": "^18.0.6",
+    "@vitejs/plugin-react": "^2.1.0",
+    "vite": "^3.1.0"
+  }
+}
