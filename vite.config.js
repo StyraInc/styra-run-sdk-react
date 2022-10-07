@@ -13,7 +13,7 @@ export default defineConfig({
     lib: {
       entry: resolve(__dirname, 'lib/main.js'),
       name: 'Styra Run React SDK',
-      fileName: 'styra-run-react'
+      fileName: 'styra-run-sdk-react'
     },
     rollupOptions: {
       external: ['react', 'prop-types'],
