@@ -1,6 +1,6 @@
 {
   "name": "@styra/run-sdk-react",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Styra Run React Front-End SDK",
   "type": "module",
   "module": "./dist/styra-run-sdk-react.js",
