@@ -60,7 +60,7 @@ import App from './App'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <AuthzProvider api="/api/authz">
+  <AuthzProvider path="/api/authz">
     <App/>
   </AuthzProvider>
 );
@@ -80,11 +80,11 @@ import { Authz, Denied } from '@styra/run-sdk-react'
 export default Ticket() {
   return (
     <div>
-      <Authz path="tickets/create/allow">
+      <Authz query="tickets/create/allow">
         <button authz={Denied.HIDDEN}>Create</button>
       </Authz>
       
-      <Authz path="tickets/resolve/allow">
+      <Authz query="tickets/resolve/allow">
         <button authz={Denied.DISABLED}>Resolve</button>
       </Authz>
     </div>
