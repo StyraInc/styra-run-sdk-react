@@ -8,16 +8,16 @@ export const Denied = {
   HIDDEN: 'deny-hidden'
 }
 
-export default function Authz({path, children}) {
+export default function Authz({query, children}) {
   const {handleAddQuery, outcomes} = useContext(Context)
 
   const allowed = useMemo(() => {
-    return outcomes[path]
+    return outcomes[query]
   }, [outcomes])
 
   useEffect(() => {
-    handleAddQuery(path)
-  }, [handleAddQuery, path])
+    handleAddQuery(query)
+  }, [handleAddQuery, query])
 
   return children
     ? renderChildren(children, allowed)
@@ -25,7 +25,7 @@ export default function Authz({path, children}) {
 }
 
 Authz.propTypes = {
-  path: PropTypes.string.isRequired,
+  query: PropTypes.string.isRequired,
   children: PropTypes.node.isRequired
 }
 

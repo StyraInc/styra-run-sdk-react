@@ -15,7 +15,7 @@ import { Authz, AuthzProvider, Denied, useAuthz } from '@styra/run-sdk-react'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <AuthzProvider api="/api/authz">
+  <AuthzProvider path="/api/authz">
     <App/>
   </AuthzProvider>
 );
@@ -34,11 +34,11 @@ function App() {
 
   return (
     <div>
-      <Authz path={Resource.CREATE}>
+      <Authz query={Resource.CREATE}>
         <button authz={Denied.HIDDEN}>Create</button>
       </Authz>
       
-      <Authz path={Resource.RESOLVE}>
+      <Authz query={Resource.RESOLVE}>
         <button authz={Denied.DISABLED}>Resolve</button>
       </Authz>
     </div>

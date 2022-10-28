@@ -3,7 +3,7 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react'
 
 export const Context = React.createContext()
 
-export default function AuthzProvider({children, api}) {
+export default function AuthzProvider({children, path}) {
   const [queries, setQueries] = useState([])
   const [outcomes, setOutcomes] = useState({})
 
@@ -31,7 +31,7 @@ export default function AuthzProvider({children, api}) {
       const paths = queries.map((path) => ({path}))
       setQueries([])
 
-      fetch(api, {
+      fetch(path, {
         method: 'POST',
         headers: {'content-type': 'application/json'},
         body: JSON.stringify({items: paths})
@@ -60,5 +60,5 @@ export default function AuthzProvider({children, api}) {
 
 AuthzProvider.propTypes = {
   children: PropTypes.node.isRequired,
-  api: PropTypes.string.isRequired
+  path: PropTypes.string.isRequired
 }
