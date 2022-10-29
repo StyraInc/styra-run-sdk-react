@@ -80,12 +80,12 @@ import { Authz, Denied } from '@styra/run-sdk-react'
 export default Ticket() {
   return (
     <div>
-      <Authz query="tickets/create/allow">
-        <button authz={Denied.HIDDEN}>Create</button>
-      </Authz>
-      
       <Authz query="tickets/resolve/allow">
         <button authz={Denied.DISABLED}>Resolve</button>
+      </Authz>
+
+      <Authz query={['tickets/read/allow', 'tickets/create/allow']}>
+        <button authz={Denied.HIDDEN}>Create</button>
       </Authz>
     </div>
   )
