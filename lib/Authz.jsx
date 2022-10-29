@@ -12,7 +12,11 @@ export default function Authz({query, children}) {
   const {handleAddQuery, outcomes} = useContext(Context)
 
   const allowed = useMemo(() => {
-    return outcomes[query]
+    if (typeof query === 'string') {
+      return outcomes[query]
+    }
+    
+    return query.every((x) => outcomes[x])
   }, [outcomes])
 
   useEffect(() => {
@@ -25,7 +29,10 @@ export default function Authz({query, children}) {
 }
 
 Authz.propTypes = {
-  query: PropTypes.string.isRequired,
+  query: PropTypes.oneOfType([
+    PropTypes.string, 
+    PropTypes.array
+  ]).isRequired,
   children: PropTypes.node.isRequired
 }
 

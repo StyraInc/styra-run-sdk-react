@@ -4,16 +4,21 @@ import React, {useCallback, useEffect, useMemo, useState} from 'react'
 export const Context = React.createContext()
 
 export default function AuthzProvider({children, path}) {
-  const [queries, setQueries] = useState([])
+  const [queries, setQueries] = useState(new Set())
   const [outcomes, setOutcomes] = useState({})
 
   const handleAddQuery = useCallback((query) => {
     setQueries((queries) => {
-      if (queries.includes(query)) {
+      const mergedQueries = new Set([
+        ...queries,
+        ...(typeof query === 'string' ? [query] : query)
+      ])
+
+      if (mergedQueries.size === queries.size) {
         return queries
       }
       
-      return [...queries, query]
+      return mergedQueries
     })
   }, [setQueries])
 
@@ -22,14 +27,14 @@ export default function AuthzProvider({children, path}) {
   ), [outcomes, handleAddQuery])
 
   useEffect(() => {
-    if (queries.length === 0) {
+    if (queries.size === 0) {
       return
     }
 
     // debounce authz API request
     const timeout = setTimeout(() => {
-      const paths = queries.map((path) => ({path}))
-      setQueries([])
+      const paths = [...queries].map((path) => ({path}))
+      setQueries(new Set())
 
       fetch(path, {
         method: 'POST',
