@@ -1,27 +1,29 @@
 import PropTypes from 'prop-types'
-import React, {useContext, useEffect, useMemo} from 'react'
+import React, {useMemo} from 'react'
 
-import {Context} from './AuthzProvider.jsx'
+import useAuthz from './useAuthz'
 
 export const Denied = {
   DISABLED: 'deny-disabled',
   HIDDEN: 'deny-hidden'
 }
 
-export default function Authz({query, children}) {
-  const {handleAddQuery, outcomes} = useContext(Context)
+export default function Authz({path, input, query, children}) {
+  const queries = useMemo(() => {
+    const queries = [...query ?? []]
 
-  const allowed = useMemo(() => {
-    if (typeof query === 'string') {
-      return outcomes[query]
+    if (path) {
+      queries.unshift(input ? {path, input} : {path})
     }
-    
-    return query.every((x) => outcomes[x])
-  }, [outcomes])
 
-  useEffect(() => {
-    handleAddQuery(query)
-  }, [handleAddQuery, query])
+    return queries
+  }, [path, input, query])
+
+  const {result} = useAuthz(queries)
+
+  const allowed = useMemo(() => (
+    result ? result.every((decision) => decision === true) : null
+  ), [result])
 
   return children
     ? renderChildren(children, allowed)
@@ -29,10 +31,9 @@ export default function Authz({query, children}) {
 }
 
 Authz.propTypes = {
-  query: PropTypes.oneOfType([
-    PropTypes.string, 
-    PropTypes.array
-  ]).isRequired,
+  path: PropTypes.string.isRequired,
+  input: PropTypes.object,
+  query: PropTypes.array,
   children: PropTypes.node.isRequired
 }
 

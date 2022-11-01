@@ -1,4 +1,4 @@
-# The Styra Run Front-End React SDK
+# The Styra Run React SDK
 
 ## Installation
 ```sh
@@ -11,11 +11,11 @@ A complete example:
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 
-import { Authz, AuthzProvider, Denied, useAuthz } from '@styra/run-sdk-react'
+import { Authz, AuthzProvider, Denied } from '@styra/run-sdk-react'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <AuthzProvider path="/api/authz">
+  <AuthzProvider endpoint="/api/authz">
     <App/>
   </AuthzProvider>
 );
@@ -26,19 +26,13 @@ const Resource = {
 }
 
 function App() {
-  const { isLoading, outcomes } = useAuthz([Resource.CREATE, Resource.RESOLVE])
-
-  if (isLoading) {
-    return <div>Loading ...</div>
-  }
-
   return (
     <div>
-      <Authz query={Resource.CREATE}>
+      <Authz path={Resource.CREATE}>
         <button authz={Denied.HIDDEN}>Create</button>
       </Authz>
       
-      <Authz query={Resource.RESOLVE}>
+      <Authz path={Resource.RESOLVE}>
         <button authz={Denied.DISABLED}>Resolve</button>
       </Authz>
     </div>
@@ -50,6 +44,10 @@ function App() {
 
 ### `<AuthzProvider/>`
 Use the `AuthzProvider` component to configure your Styra Run API proxy endpoint, which enables batch query requests with caching to your application:
+
+* `endpoint` specifies the API to check authorization decisions
+* `defaultInput` every decision would be passed in this input unless overridden
+
 ```jsx
 import React from 'react'
 import ReactDOM from 'react-dom/client'
@@ -60,14 +58,16 @@ import App from './App'
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-  <AuthzProvider path="/api/authz">
+  <AuthzProvider endpoint="/api/authz" defaultInput={{tenant: 'acmecorp'}}>
     <App/>
   </AuthzProvider>
 );
 ```
 
 ### `<Authz/>`
-Use the `Authz` component to conditionally render components based on whether the current user is allowed or denied for particular resources. Add the `authz` property to specify how to render these components, options are:
+Use the `Authz` component to conditionally render components based on whether 
+the current user is allowed or denied for the specified queries. Add the `authz` 
+property to define how to render these components, options are:
 
 - `Denied.DISABLED` adds a `disabled` element attribute if authorization was denied
 - `Denied.HIDDEN` adds a `hidden` element attribute if authorization was denied
@@ -80,11 +80,14 @@ import { Authz, Denied } from '@styra/run-sdk-react'
 export default Ticket() {
   return (
     <div>
-      <Authz query="tickets/resolve/allow">
+      <Authz path="tickets/resolve/allow" input={{id: 'ticket1234'}}>
         <button authz={Denied.DISABLED}>Resolve</button>
       </Authz>
 
-      <Authz query={['tickets/read/allow', 'tickets/create/allow']}>
+      <Authz query={[
+        {path: 'tickets/read/allow'},
+        {path: 'tickets/create/allow', input={{id: 'ticket1234'}}}
+      ]}>
         <button authz={Denied.HIDDEN}>Create</button>
       </Authz>
     </div>
@@ -95,35 +98,35 @@ export default Ticket() {
 ## Hooks
 
 ### `useAuthz`
-This hook provides flexibility that requires more control over the `Authz` component. This hook provides:
+This hook provides flexibility that requires more control over the `Authz` 
+component. This hook provides:
 - a way to preload authorization requests
 - determines which authorization requests are loading
-- an decision outcome object containing authorization results
+- a result array containing in order the queried decisions
 
-`useAuthz` takes in an array of paths to query for
+`useAuthz` takes in an array of objects (path, input):
 ```jsx
 import React from 'react'
 
 import { useAuthz } from '@styra/run-sdk-react'
 
-const Resource = {
-  CREATE: 'tickets/create/allow',
-  RESOLVE: 'tickets/resolve/allow'
-}
-
 export default Ticket() {
-  const { isLoading, outcomes } = useAuthz([Resource.CREATE, Resource.RESOLVE])
+  const { isLoading, result } = useAuthz([
+    {path: 'tickets/create/allow'}, 
+    {path: 'tickets/resolve/allow', input: {id: 'ticket1234'}}
+  ])
   
   if (isLoading) {
     return null
   }
+
+  const [isCreateAllowed, isResolvedAllowed] = result
   
   return (
     <div>
-      {outcomes[Resource.CREATE] && <button>Create</button>}
-      <button disabled={outcomes[Resource.RESOLVE]}>Resolve</button>
+      {isCreateAllowed && <button>Create</button>}
+      <button disabled={isResolvedAllowed}>Resolve</button>
     </div>
   )
 }
 ```
-
